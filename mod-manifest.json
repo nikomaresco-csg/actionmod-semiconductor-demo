@@ -1,0 +1,73 @@
+{
+    "apiVersion": "2.0",
+    "version": "1.0",
+    "type": "action",
+    "name": "Semiconductor",
+    "id": "semiconductor",
+    "description": "Description of what the mod does.",
+    "capabilities": [
+        "LibraryRead"
+    ],
+    "icon": "icon.svg",
+    "scripts": [
+        {
+            "id": "wafer-transform",
+            "name": "Wafermap data transform",
+            "file": "build/wafer-transform.js",
+            "entryPoint": "applyWaferTransform",
+            "parameters": [
+                {
+                    "name": "baseDataTable",
+                    "type": "DataTable",
+                    "description": "The data table to transform"
+                },
+                {
+                    "name": "primaryKeyColumns",
+                    "type": "String",
+                    "description": "Comma-separated list of column names that make up the primary key"
+                },
+                {
+                    "name": "targetColumnTitles",
+                    "type": "String",
+                    "description": "Comma-separated list of column titles to use as the target columns. Must have same number of items as targetColumnValues"
+                },
+                {
+                    "name": "targetColumnValues",
+                    "type": "String",
+                    "description": "Comma-separated list of column values to use as the target columns. Must have same number of items as targetColumnNames"
+                },
+                {
+                    "name": "targetMeasure",
+                    "type": "String",
+                    "description": "The aggregate measure to use on the target columns"
+                },
+                {
+                    "name": "outputDataTableName",
+                    "type": "String",
+                    "description": "The name of data table that will be created as a result of the transformations"
+                }
+            ]
+        },
+        {
+            "id": "data-function",
+            "name": "Trigger a Data Function registered in the current document.",
+            "file": "build/data-function.js",
+            "entryPoint": "triggerDataFunction",
+            "parameters": [
+                {
+                    "name": "dataFunctionName",
+                    "type": "String",
+                    "description": "The name of the Data Function to execute"
+                }
+            ]
+        },
+        {
+            "id": "wafer-mapchart",
+            "name": "Create wafer map chart",
+            "file": "build/wafer-mapchart.js",
+            "entryPoint": "createWaferMapchart",
+            "parameters": [
+            ]
+        }
+    ]
+}
