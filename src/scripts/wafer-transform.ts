@@ -332,7 +332,7 @@ export function applyWaferTransform({
 
         const transformedDataTableDataSource = applyTransformSeries(
             application.ImportContext,
-            newDataSource,
+            baseDataSource,
             pkColumns,
             [titleCol],
             [valueCol],
