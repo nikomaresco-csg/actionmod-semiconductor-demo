@@ -281,19 +281,21 @@ export function applyWaferTransform({
     document,
     application,
     baseDataTable,
+    /*
     primaryKeyColumns,
     targetColumnTitles,
     targetColumnValues,
     targetMeasure,
     outputDataTableName,
+    */
 }: ApplyWaferTransformParameters) {
 
     // debug values
-    primaryKeyColumns = D_PRIMARYKEYCOLUMNS;
-    targetColumnTitles = D_TARGETCOLUMNTITLES;
-    targetColumnValues = D_TARGETCOLUMNVALUES;
-    targetMeasure = D_TARGETMEASURE;
-    outputDataTableName = D_OUTPUTDATATABLENAME;
+    const primaryKeyColumns = D_PRIMARYKEYCOLUMNS;
+    const targetColumnTitles = D_TARGETCOLUMNTITLES;
+    const targetColumnValues = D_TARGETCOLUMNVALUES;
+    const targetMeasure = D_TARGETMEASURE;
+    const outputDataTableName = D_OUTPUTDATATABLENAME;
 
     const inputsValid = validateInputs();
     if (!inputsValid) {
