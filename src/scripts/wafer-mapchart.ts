@@ -110,8 +110,8 @@ export function createMapchart({
     // get the current data table, or the first one added to the document if one is not active
     const dataTable = document.ActiveDataTableReference ?? Array.from(document.Data.Tables)[0];
 
-    const marking1 = getOrCreateMarking(document, MARKING1_NAME);
-    const marking2 = getOrCreateMarking(document, MARKING2_NAME);
+    // const marking1 = getOrCreateMarking(document, MARKING1_NAME);
+    // const marking2 = getOrCreateMarking(document, MARKING2_NAME);
 
     // create a new MapChart
     const mapChart = page.Visuals.AddNew(MapChart);
