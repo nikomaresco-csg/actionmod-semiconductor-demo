@@ -9,8 +9,8 @@ From a high level, the Action Mod uses APIs to perform the following tasks:
 
 Script|Purpose
 ---|---
-wafer-transform|Generates a series of transformations on a Data Table to prepare wafer data for bin analysis.
-wafer-mapchart|Creates a configured Map Chart visualization with common settings for conducting wafer map bin analysis.
+`wafer-transform`|Generates a series of transformations on a Data Table to prepare wafer data for bin analysis.
+`wafer-mapchart`|Creates a configured Map Chart visualization with common settings for conducting wafer map bin analysis.
 
 ## Wafermap data transform
 The `wafer-transform` action requires a Data Table in the analysis with the following columns and data types:
