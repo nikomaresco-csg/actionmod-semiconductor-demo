@@ -14,11 +14,11 @@ const STEP5_RESULTNAMINGEXPRESSION = "%C";
 
 // default values for the wafer transform
 // storing them as constants because it's too cumbersome to input column names in the current UI
-const D_PRIMARYKEYCOLUMNS = "New Wafer,Bin";
-const D_TARGETCOLUMNTITLES = "Circle,Segment,Mask";
-const D_TARGETCOLUMNVALUES = "CirclePct,SegmentPct,MaskPct";
-const D_TARGETMEASURE = "Avg";
-const D_OUTPUTDATATABLENAME = "Zone Profiles";
+const IDENTITY_COLUMNS = "New Wafer,Bin";
+const COLUMN_TITLES = "Circle,Segment,Mask";
+const COLUMN_VALUES = "CirclePct,SegmentPct,MaskPct";
+const AGGREGATION = "Avg";
+const OUTPUT_TABLE_NAME = "Zone Profiles";
 
 
 /*
@@ -255,11 +255,11 @@ export function applyWaferTransform({
 }: ApplyWaferTransformParameters) {
 
     // debug values
-    const primaryKeyColumns = D_PRIMARYKEYCOLUMNS;
-    const targetColumnTitles = D_TARGETCOLUMNTITLES;
-    const targetColumnValues = D_TARGETCOLUMNVALUES;
-    const targetMeasure = D_TARGETMEASURE;
-    const outputDataTableName = D_OUTPUTDATATABLENAME;
+    const primaryKeyColumns = IDENTITY_COLUMNS;
+    const targetColumnTitles = COLUMN_TITLES;
+    const targetColumnValues = COLUMN_VALUES;
+    const targetMeasure = AGGREGATION;
+    const outputDataTableName = OUTPUT_TABLE_NAME;
 
     const baseDataSource = new DataTableDataSource(baseDataTable);
 

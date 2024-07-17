@@ -6,13 +6,13 @@ const { MapChart, MarkerLayerVisualization, Projection } = Spotfire.Dxp.Applicat
 
 // wafer mapchart configuration
 const WAFER_PK_COL_NAME = "New Wafer";
-const DIE_X_COL_NAME = "Die X";
-const DIE_Y_COL_NAME = "Die Y";
+const X_COL_NAME = "Die X";
+const Y_COL_NAME = "Die Y";
 const COLOR_AXIS_COL_NAME = "Bin";
 const MAP_TRELLIS_ROWS = 3;
 const MAP_TRELLIS_COLS = 7;
-const MAP_TITLE = "Wafer bin map";
-const MARKER_LAYER_TITLE = "die layer";
+const CHART_TITLE = "Wafer bin map";
+const MAP_MARKERLAYER_TITLE = "die layer";
 
 const COLORSCHEME_LIBRARY_PATH = "/Big Wafer";
 
@@ -35,7 +35,7 @@ export function createMapchart({
     mapChart.Layers.Clear();
 
     // set up basic map chart properties
-    mapChart.Title = MAP_TITLE;
+    mapChart.Title = CHART_TITLE;
     mapChart.Projection = Projection.None;
     //mapChart.Legend.Visible = false;
 
@@ -45,7 +45,7 @@ export function createMapchart({
     markerLayer.AutoConfigure();
 
     // basic layer properties
-    markerLayer.Title = MARKER_LAYER_TITLE;
+    markerLayer.Title = MAP_MARKERLAYER_TITLE;
     markerLayer.MarkerClass = MarkerClass.Tile;
     //markerLayer.MarkerByAxis.Expression = `<[${DIE_X_COL_NAME}] NEST [${DIE_Y_COL_NAME}]>`;
 
@@ -55,8 +55,8 @@ export function createMapchart({
     const markerLayerAsRegularLayer = mapChart.Layers.Item.get(0)!;
     markerLayerAsRegularLayer.Projection = Projection.None;
 
-    markerLayer.XAxis.Expression=`[${DIE_X_COL_NAME}]`;
-    markerLayer.YAxis.Expression=`[${DIE_Y_COL_NAME}]`;
+    markerLayer.XAxis.Expression=`[${X_COL_NAME}]`;
+    markerLayer.YAxis.Expression=`[${Y_COL_NAME}]`;
 
     // set the color axis and set first Bin color to a light gray
     // (keeping this as a fallback in case the library is unavailable)
