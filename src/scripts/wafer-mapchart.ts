@@ -3,7 +3,6 @@ const { MarkerClass, CategoryKey } = Spotfire.Dxp.Application.Visuals;
 const { MapChart, MarkerLayerVisualization, Projection } = Spotfire.Dxp.Application.Visuals.Maps;
 const { LibraryManager, LibraryItem, LibraryItemType } = Spotfire.Dxp.Framework.Library;
 
-
 // markings with these names will be created if they don't already exist
 const MARKING1_NAME = "Marking";
 const MARKING2_NAME = "Marking (2)";
