@@ -22,7 +22,7 @@ const MAP_TRELLIS_COLS = 7;
 const MAP_TITLE = "Wafer bin map";
 const MARKER_LAYER_TITLE = "die layer";
 
-const COLORSCHEME_LIBRARY_PATH = "/bigwafer_colors";
+const COLORSCHEME_LIBRARY_PATH = "/Big Wafer";
 
 
 /*
@@ -161,6 +161,21 @@ export function createMapchart({
     mapChart.Trellis.ManualRowCount = MAP_TRELLIS_ROWS;
     mapChart.Trellis.ManualColumnCount = MAP_TRELLIS_COLS;
 
+    try {
+        const documentColorScheme = getColorSchemeFromDocument(document, "Big Wafer");
+        markerLayer.ColorAxis.Coloring.Apply(documentColorScheme.DisplayName);
+
+    } catch (noDocumentColorSchemeError) {
+        // scheme not found in the document; look in the library instead
+        try {
+            const libraryColorScheme = getColorSchemeFromLibrary(application, COLORSCHEME_LIBRARY_PATH);
+            const documentColorScheme = document.ColoringTemplates.AddFromLibrary(libraryColorScheme);
+            markerLayer.ColorAxis.Coloring.Apply(documentColorScheme.DisplayName);
+        } catch (libraryAccessError) {
+            // probably the user is not connected to a server, or the library path is invalid
+            // do nothing, the user will have to set the color scheme manually
+        }
+    }
     // only proceed if we are connected to a server
     if (checkServerConnection(application)) {
         const libraryManager = application.GetService(LibraryManager);
@@ -181,6 +196,33 @@ export function createMapchart({
         // apply the scheme to the marker layer
         markerLayer.ColorAxis.Coloring.Apply(documentColorScheme.DisplayName);
     }
+}
+
+function getColorSchemeFromLibrary(
+    application: Spotfire.Dxp.Application.AnalysisApplication,
+    libraryPath: string
+): Spotfire.Dxp.Framework.Library.LibraryItem {
+    if (checkServerConnection(application)) {
+        throw new Error("Cannot access library when not connected to a server");
+    }
+
+    const libraryManager = application.GetService(LibraryManager);
+    if (libraryManager == null || !libraryManager) {
+        throw new Error("LibraryManager service not available");
+    }
+
+    return getLibraryItem(
+        libraryManager,
+        libraryPath,
+        LibraryItemType.ColorScheme
+    );
+}
+
+function getColorSchemeFromDocument(
+    document: Spotfire.Dxp.Application.Document,
+    colorSchemeName: string
+): Spotfire.Dxp.Application.Visuals.ConditionalColoring.Coloring {
+    return document.ColoringTemplates.Item.get(colorSchemeName)!;
 }
 
 RegisterEntryPoint(createMapchart);
