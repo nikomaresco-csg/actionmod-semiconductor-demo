@@ -12,7 +12,7 @@ const YAXIS_EXPRESSION = "[CirclePct.Center], [CirclePct.Donut], [CirclePct.Edge
 const LINEBYAXIS_EXPRESSION = "<[New Wafer]>";
 const COLORAXIS_EXPRESSION = "<Bin>";
 const LIMITBY_EXPRESSION = "[Bin] >= 2";  // AKA WhereClauseExpression
-const COLORSCHEME_LIBRARY_PATH = "/Big Wafer";
+const COLORSCHEME_NAME = "Big Wafer";
 
 
 export function createLinechart({ document, application }: CreateLinechartParameters) {
@@ -46,13 +46,13 @@ export function createLinechart({ document, application }: CreateLinechartParame
 
     // attempt to apply color scheme
     try {
-        const documentColorScheme = getColorSchemeFromDocument(document, "Big Wafer");
+        const documentColorScheme = getColorSchemeFromDocument(document, COLORSCHEME_NAME);
         lineChart.ColorAxis.Coloring.Apply(documentColorScheme.DisplayName);
 
     } catch (noDocumentColorSchemeError) {
         // scheme not found in the document; look in the library instead
         try {
-            const libraryColorScheme = getColorSchemeFromLibrary(application, COLORSCHEME_LIBRARY_PATH);
+            const libraryColorScheme = getColorSchemeFromLibrary(application, `/${COLORSCHEME_NAME}`);
             const documentColorScheme = document.ColoringTemplates.AddFromLibrary(libraryColorScheme);
             lineChart.ColorAxis.Coloring.Apply(documentColorScheme.DisplayName);
         } catch (libraryAccessError) {

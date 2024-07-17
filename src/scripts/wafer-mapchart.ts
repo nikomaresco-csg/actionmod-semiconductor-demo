@@ -14,7 +14,7 @@ const TRELLIS_COLS_COUNT = 7;
 const CHART_TITLE = "Wafer bin map";
 const MAP_MARKERLAYER_TITLE = "die layer";
 
-const COLORSCHEME_LIBRARY_PATH = "/Big Wafer";
+const COLORSCHEME_NAME = "/Big Wafer";
 
 
 export function createMapchart({
@@ -74,13 +74,13 @@ export function createMapchart({
     mapChart.Trellis.ManualColumnCount = TRELLIS_COLS_COUNT;
 
     try {
-        const documentColorScheme = getColorSchemeFromDocument(document, "Big Wafer");
+        const documentColorScheme = getColorSchemeFromDocument(document, COLORSCHEME_NAME);
         markerLayer.ColorAxis.Coloring.Apply(documentColorScheme.DisplayName);
 
     } catch (noDocumentColorSchemeError) {
         // scheme not found in the document; look in the library instead
         try {
-            const libraryColorScheme = getColorSchemeFromLibrary(application, COLORSCHEME_LIBRARY_PATH);
+            const libraryColorScheme = getColorSchemeFromLibrary(application, `/${COLORSCHEME_NAME}`);
             const documentColorScheme = document.ColoringTemplates.AddFromLibrary(libraryColorScheme);
             markerLayer.ColorAxis.Coloring.Apply(documentColorScheme.DisplayName);
         } catch (libraryAccessError) {
