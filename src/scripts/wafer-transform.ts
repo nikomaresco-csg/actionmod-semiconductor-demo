@@ -1,36 +1,25 @@
-const { DataTable, DataColumn, DataColumnSignature, AddColumnsSettings, JoinType,
-    DataFlowBuilder, DataSourcePromptMode, DataType, DataRowReaderColumn } = Spotfire.Dxp.Data;
-const { PivotTransformation, UnpivotTransformation, ReplaceValuesTransformation,
-        AddCalculatedColumnTransformation, ColumnAggregation, ReplaceColumnTransformation } = Spotfire.Dxp.Data.Transformations;
-const { DataTableDataSource, ImportContext } = Spotfire.Dxp.Data.Import;
-const { Dictionary, List } = System.Collections.Generic;
+import { getColumn, createOrReplaceDataTable } from "../utils/data";
 
+const { DataColumnSignature, AddColumnsSettings, JoinType, DataFlowBuilder, 
+    DataSourcePromptMode, DataType, DataRowReaderColumn } = Spotfire.Dxp.Data;
+const { PivotTransformation, UnpivotTransformation, ReplaceValuesTransformation,
+    AddCalculatedColumnTransformation, ColumnAggregation } = Spotfire.Dxp.Data.Transformations;
+const { DataTableDataSource } = Spotfire.Dxp.Data.Import;
+const { Dictionary } = System.Collections.Generic;
+
+
+// result naming expressions for pivot and transformations
 const STEP1_RESULTNAMINGEXPRESSION = "%V.%C";
 const STEP5_RESULTNAMINGEXPRESSION = "%C";
 
-// default values for testing
+// default values for the wafer transform
+// storing them as constants because it's too cumbersome to input column names in the current UI
 const D_PRIMARYKEYCOLUMNS = "New Wafer,Bin";
 const D_TARGETCOLUMNTITLES = "Circle,Segment,Mask";
 const D_TARGETCOLUMNVALUES = "CirclePct,SegmentPct,MaskPct";
 const D_TARGETMEASURE = "Avg";
 const D_OUTPUTDATATABLENAME = "Zone Profiles";
 
-/*
-* tries to get a column by name from a data table, throws an error if it doesn't exist
-*
-* @param dataTable - the data table to search
-* @param columnName - the name of the column to find
-* @returns the column if it exists
-*/
-function getColumn(
-    dataTable: Spotfire.Dxp.Data.DataTable,
-    columnName: string
-): Spotfire.Dxp.Data.DataColumn {
-    const col = OutParam.create(DataColumn);
-    if (!dataTable.Columns.TryGetValue(columnName, col.out))
-        throw new Error(`Cannot find column '${columnName}' in table '${dataTable.Name}'.`);
-    return col;
-}
 
 /*
 * zips two arrays together
@@ -73,27 +62,7 @@ function convertDataColumnsToDataSignatures(
     return columns.map(col => new DataColumnSignature(col));
 }
 
-/*
-* creates a new DataTable or replaces an existing one with a "fresh" copy of sourceTable
-*
-* @param document - Spotfire Document context
-* @param tableName - the name of the table to create
-* @param sourceTable - the DataTable to copy from
-* @returns the new table
-*/
-function createOrReplaceDataTable(
-    document: Spotfire.Dxp.Application.Document,
-    tableName: string,
-    sourceTable: Spotfire.Dxp.Data.DataSource
-): Spotfire.Dxp.Data.DataTable {
-    if (document.Data.Tables.Contains(tableName)) {
-        // safe to use ! here since we know the table exists
-        const existingTable = document.Data.Tables.Item.get(tableName)!;
-        document.Data.Tables.Remove(existingTable);
-    }
-    const newTable = document.Data.Tables.Add(tableName, sourceTable);
-    return newTable;
-}
+
 
 /*
 * applies a series of transformations to a DataTable
