@@ -13,7 +13,7 @@ const D_PRIMARYKEYCOLUMNS = "New Wafer,Bin";
 const D_TARGETCOLUMNTITLES = "Circle,Segment,Mask";
 const D_TARGETCOLUMNVALUES = "CirclePct,SegmentPct,MaskPct";
 const D_TARGETMEASURE = "Avg";
-const D_OUTPUTDATATABLENAME = "WaferTransform";
+const D_OUTPUTDATATABLENAME = "Zone Profiles";
 
 /*
 * tries to get a column by name from a data table, throws an error if it doesn't exist
