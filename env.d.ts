@@ -19,3 +19,11 @@ interface CreateWaferMapchartParameters {
     /** The current {@link Spotfire.Dxp.Application.AnalysisApplication}. */
     application: Spotfire.Dxp.Application.AnalysisApplication;
 }
+
+interface CreateLinechartParameters {
+    /** The loaded {@link Spotfire.Dxp.Application.Document}. */
+    document: Spotfire.Dxp.Application.Document;
+
+    /** The current {@link Spotfire.Dxp.Application.AnalysisApplication}. */
+    application: Spotfire.Dxp.Application.AnalysisApplication;
+}
