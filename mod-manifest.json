@@ -31,6 +31,12 @@
             "entryPoint": "createWaferMapchart",
             "parameters": [
             ]
+        },
+        {
+            "id": "create-linechart",
+            "name": "Create a LineChart",
+            "entryPoint": "createLinechart",
+            "file": "build/create-linechart.js"
         }
     ]
 }
