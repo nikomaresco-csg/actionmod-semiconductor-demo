@@ -5,12 +5,12 @@ const { MapChart, MarkerLayerVisualization, Projection } = Spotfire.Dxp.Applicat
 
 
 // wafer mapchart configuration
-const WAFER_PK_COL_NAME = "New Wafer";
-const X_COL_NAME = "Die X";
-const Y_COL_NAME = "Die Y";
-const COLOR_AXIS_COL_NAME = "Bin";
-const MAP_TRELLIS_ROWS = 3;
-const MAP_TRELLIS_COLS = 7;
+const XAXIS_EXPRESSION = "[Die X]";
+const YAXIS_EXPRESSION = "[Die Y]";
+const COLORAXIS_EXPRESSION = "Bin";
+const TRELLIS_PANEL_EXPRESSION = "[New Wafer]";
+const TRELLIS_ROWS_COUNT = 3;
+const TRELLIS_COLS_COUNT = 7;
 const CHART_TITLE = "Wafer bin map";
 const MAP_MARKERLAYER_TITLE = "die layer";
 
@@ -27,24 +27,19 @@ export function createMapchart({
     // get the current data table, or the first one added to the document if one is not active
     const dataTable = document.ActiveDataTableReference ?? Array.from(document.Data.Tables)[0];
 
-    // const marking1 = getOrCreateMarking(document, MARKING1_NAME);
-    // const marking2 = getOrCreateMarking(document, MARKING2_NAME);
-
     // create a new MapChart
     const mapChart = page.Visuals.AddNew(MapChart);
     mapChart.Layers.Clear();
 
-    // set up basic map chart properties
     mapChart.Title = CHART_TITLE;
     mapChart.Projection = Projection.None;
-    //mapChart.Legend.Visible = false;
 
-    // create and configure the marking layer
+    // create and configure a marking layer
     const markerLayer = OutParam.create(MarkerLayerVisualization);
     mapChart.Layers.AddNewMarkerLayer(dataTable, markerLayer.out);
+    // need to autoconfigure or the layer will behave unexpectedly
     markerLayer.AutoConfigure();
 
-    // basic layer properties
     markerLayer.Title = MAP_MARKERLAYER_TITLE;
     markerLayer.MarkerClass = MarkerClass.Tile;
     //markerLayer.MarkerByAxis.Expression = `<[${DIE_X_COL_NAME}] NEST [${DIE_Y_COL_NAME}]>`;
@@ -55,12 +50,12 @@ export function createMapchart({
     const markerLayerAsRegularLayer = mapChart.Layers.Item.get(0)!;
     markerLayerAsRegularLayer.Projection = Projection.None;
 
-    markerLayer.XAxis.Expression=`[${X_COL_NAME}]`;
-    markerLayer.YAxis.Expression=`[${Y_COL_NAME}]`;
+    markerLayer.XAxis.Expression = XAXIS_EXPRESSION;
+    markerLayer.YAxis.Expression = YAXIS_EXPRESSION;
 
     // set the color axis and set first Bin color to a light gray
-    // (keeping this as a fallback in case the library is unavailable)
-    markerLayer.ColorAxis.Expression = `<${COLOR_AXIS_COL_NAME}>`;
+    // (keeping this as a fallback in case the color scheme is unavailable)
+    markerLayer.ColorAxis.Expression = COLORAXIS_EXPRESSION;
     const lightGray = System.Drawing.Color.FromArgb(255, 241, 241, 241);
     markerLayer.ColorAxis.Coloring.SetColorForCategory(new CategoryKey(1), lightGray);
 
@@ -73,10 +68,10 @@ export function createMapchart({
 
     // this must be set after the markerLayer is created
     // configure trellis properties
-    mapChart.Trellis.PanelAxis.Expression = `<[${WAFER_PK_COL_NAME}]>`;
+    mapChart.Trellis.PanelAxis.Expression = TRELLIS_PANEL_EXPRESSION;
     mapChart.Trellis.ManualLayout = true;
-    mapChart.Trellis.ManualRowCount = MAP_TRELLIS_ROWS;
-    mapChart.Trellis.ManualColumnCount = MAP_TRELLIS_COLS;
+    mapChart.Trellis.ManualRowCount = TRELLIS_ROWS_COUNT;
+    mapChart.Trellis.ManualColumnCount = TRELLIS_COLS_COUNT;
 
     try {
         const documentColorScheme = getColorSchemeFromDocument(document, "Big Wafer");
