@@ -95,11 +95,6 @@ function createOrReplaceDataTable(
     return newTable;
 }
 
-function validateInputs(): boolean {
-    // make sure that both column lists contain the same number of values
-    return true;
-}
-
 /*
 * applies a series of transformations to a DataTable
 *
@@ -296,11 +291,6 @@ export function applyWaferTransform({
     const targetColumnValues = D_TARGETCOLUMNVALUES;
     const targetMeasure = D_TARGETMEASURE;
     const outputDataTableName = D_OUTPUTDATATABLENAME;
-
-    const inputsValid = validateInputs();
-    if (!inputsValid) {
-        throw new Error("Invalid input parameters.")
-    }
 
     const baseDataSource = new DataTableDataSource(baseDataTable);
 
