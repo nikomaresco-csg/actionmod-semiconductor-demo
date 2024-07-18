@@ -15,6 +15,7 @@
             "name": "Wafermap data transform",
             "file": "build/wafer-transform.js",
             "entryPoint": "applyWaferTransform",
+            "description": "Performs a series of transormations on a data table to prepare it for zone profile analysis.",
             "parameters": [
                 {
                     "name": "baseDataTable",
@@ -26,17 +27,19 @@
         },
         {
             "id": "wafer-mapchart",
-            "name": "Create wafer map chart",
+            "name": "Create wafer bin map",
             "file": "build/wafer-mapchart.js",
             "entryPoint": "createWaferMapchart",
+            "description": "Creates a wafer bin map visualization",
             "parameters": [
             ]
         },
         {
             "id": "create-linechart",
-            "name": "Create a LineChart",
+            "name": "Create a zone profile line chart",
             "entryPoint": "createLinechart",
-            "file": "build/create-linechart.js"
+            "file": "build/create-linechart.js",
+            "description": "Creates a line chart visualization for zone profile analysis"
         }
     ]
 }
