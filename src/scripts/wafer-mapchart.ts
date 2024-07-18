@@ -8,13 +8,13 @@ const { MapChart, MarkerLayerVisualization, Projection } = Spotfire.Dxp.Applicat
 const XAXIS_EXPRESSION = "[Die X]";
 const YAXIS_EXPRESSION = "[Die Y]";
 const COLORAXIS_EXPRESSION = "Bin";
-const TRELLIS_PANEL_EXPRESSION = "[New Wafer]";
+const TRELLIS_PANEL_EXPRESSION = "<[New Wafer]>";
 const TRELLIS_ROWS_COUNT = 3;
 const TRELLIS_COLS_COUNT = 7;
 const CHART_TITLE = "Wafer bin map";
 const MAP_MARKERLAYER_TITLE = "die layer";
-
-const COLORSCHEME_NAME = "/Big Wafer";
+const COLORSCHEME_NAME = "Big Wafer";
+const DATATABLE_NAME = "Big Wafer"
 
 
 export function createMapchart({
@@ -24,8 +24,11 @@ export function createMapchart({
 
     // get the current page, or create a new one if one doesn't exist
     const page = document.ActivePageReference ?? document.Pages.AddNew();
-    // get the current data table, or the first one added to the document if one is not active
-    const dataTable = document.ActiveDataTableReference ?? Array.from(document.Data.Tables)[0];
+
+    const dataTable = document.Data.Tables.Item.get(DATATABLE_NAME);
+    if (!dataTable) {
+        throw new Error(`Data Table not found: ${DATATABLE_NAME}`);
+    }
 
     // create a new MapChart
     const mapChart = page.Visuals.AddNew(MapChart);

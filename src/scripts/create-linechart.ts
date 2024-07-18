@@ -13,14 +13,18 @@ const LINEBYAXIS_EXPRESSION = "<[New Wafer]>";
 const COLORAXIS_EXPRESSION = "<Bin>";
 const LIMITBY_EXPRESSION = "[Bin] >= 2";  // AKA WhereClauseExpression
 const COLORSCHEME_NAME = "Big Wafer";
+const DATATABLE_NAME = "Zone Profiles";
 
 
 export function createLinechart({ document, application }: CreateLinechartParameters) {
     
     // get the current page, or create a new one if one doesn't exist
     const page = document.ActivePageReference ?? document.Pages.AddNew();
-    // get the current data table, or the first one added to the document if one is not active
-    const dataTable = document.ActiveDataTableReference ?? Array.from(document.Data.Tables)[0];
+
+    const dataTable = document.Data.Tables.Item.get(DATATABLE_NAME);
+    if (!dataTable) {
+        throw new Error(`Data Table not found: ${DATATABLE_NAME}`);
+    }
     
     // create a new LineChart
     const lineChart = page.Visuals.AddNew(LineChart);
