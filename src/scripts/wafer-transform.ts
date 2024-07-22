@@ -14,7 +14,7 @@ const STEP5_RESULTNAMINGEXPRESSION = "%C";
 
 // default values for the wafer transform
 // storing them as constants because it's too cumbersome to input column names in the current UI
-const IDENTITY_COLUMNS = "New Wafer,Bin";
+const IDENTITY_COLUMNS = "Wafer,Bin,Lot";
 const COLUMN_TITLES = "Circle,Segment,Mask";
 const COLUMN_VALUES = "CirclePct,SegmentPct,MaskPct";
 const AGGREGATION = "Avg";
@@ -62,8 +62,6 @@ function convertDataColumnsToDataSignatures(
     return columns.map(col => new DataColumnSignature(col));
 }
 
-
-
 /*
 * applies a series of transformations to a DataTable
 *
@@ -89,7 +87,18 @@ function applyTransformSeries(
     //  which will ultimately be used in the Add Columns operation
     const dfb = new DataFlowBuilder(dataSource, importContext);
 
-//1: pivot
+//1: add percentage column
+    const colname = titleColumns[0].Name;
+    const colname_pct = `${titleColumns[0].Name}Pct`;
+    const step1_addColumns = new AddCalculatedColumnTransformation(
+        colname_pct,
+        `Count() OVER ([Lot], [Wafer], [${colname}], [Bin]) / Count() OVER ([Lot], [Wafer], [${colname}])`
+    )
+    dfb.AddTransformation(step1_addColumns);
+    let flow = dfb.Build();
+    let reader = dfb.Execute(DataSourcePromptMode.None);
+
+//2: pivot
     // the first Pivot has to be applied immediately or we won't know which columns
     //  to use during the Unpivot step
 
@@ -110,47 +119,45 @@ function applyTransformSeries(
     // first convert the DataColumnSignatures to ColumnAggregations, then create a TypedArray
     const valueColumnsAgg = valueColumnSignatures.map(col => new ColumnAggregation(col, targetMeasure));
 
-    const step1_pivot = new PivotTransformation();
-    step1_pivot.IdentityColumns = identityColumnsList;
-    step1_pivot.CategoryColumns = categoryColumnsList;
-    step1_pivot.ResultNamingExpression = STEP1_RESULTNAMINGEXPRESSION;
-    step1_pivot.ValueColumns = TypedArray.create(
+    const step2_pivot = new PivotTransformation();
+    step2_pivot.IdentityColumns = identityColumnsList;
+    step2_pivot.CategoryColumns = categoryColumnsList;
+    step2_pivot.ResultNamingExpression = STEP1_RESULTNAMINGEXPRESSION;
+    step2_pivot.ValueColumns = TypedArray.create(
         ColumnAggregation,
         valueColumnsAgg
     );
 
-    dfb.AddTransformation(step1_pivot);
-    let flow = dfb.Build();
-    let reader = dfb.Execute(DataSourcePromptMode.None)
+    dfb.AddTransformation(step2_pivot);
+    flow = dfb.Build();
+    reader = dfb.Execute(DataSourcePromptMode.None);
 
-//2: unpivot
+//3: unpivot
 
     // generate a list of new columns created by the pivot containing all columns except ones ending with ".0"
     const newPivotColumns = Array.from(reader.Columns).filter(
         col => col.Name.startsWith(titleColumns[0].Name) && !col.Name.endsWith(".0")
     );
 
-    const step2_unpivot = new UnpivotTransformation();
-    step2_unpivot.CategoryName = "Category";
-    step2_unpivot.CategoryType = DataType.String;
-    step2_unpivot.ResultName = "Value";
-    step2_unpivot.ResultType = DataType.Real;
-    step2_unpivot.IdentityColumns = TypedArray.create(
+    const step3_unpivot = new UnpivotTransformation();
+    step3_unpivot.CategoryName = "Category";
+    step3_unpivot.CategoryType = DataType.String;
+    step3_unpivot.ResultName = "Value";
+    step3_unpivot.ResultType = DataType.Real;
+    step3_unpivot.IdentityColumns = TypedArray.create(
         DataColumnSignature,
         identityColumnSignatures
     );
-    step2_unpivot.ValueColumns = TypedArray.create(
+    step3_unpivot.ValueColumns = TypedArray.create(
         DataColumnSignature,
         newPivotColumns.map(col => new DataColumnSignature(col))
     );
 
-    dfb.AddTransformation(step2_unpivot);
+    dfb.AddTransformation(step3_unpivot);
     flow = dfb.Build();
     reader = dfb.Execute(DataSourcePromptMode.None);
 
-
-
-//3: replace (Empty) with 0
+//4: replace (Empty) with 0
 /*
 since the dfb returns a DataFlow, it's not possible to use getColumn to get the new Value column
 instead we need to get the DataType for the "Value" column in order to construct a signature
@@ -163,23 +170,28 @@ instead we need to get the DataType for the "Value" column in order to construct
     if (!valueColumn.DataType.Formatter.TryParse("0.0", typedValue.out))
         throw new Error("Cannot parse 0.0 to the correct type for the Value column.");
 
-//??? ReplaceValuesTransformation API doesn't allow for replacing (Empty) with a number
-    const step3_replaceValues = new ReplaceValuesTransformation(valueColumnSignature, null, typedValue);
+    const step4_replaceValues = new ReplaceValuesTransformation(valueColumnSignature, null, typedValue);
 
 // using a ReplaceColumnTransformation with `SN()` (SubstituteNull) function as a workaround
 //const step3_replaceValues = createReplaceColumnTransform(valueColumnSignature, "Value", "Real(SN([Value], 0))");
-    dfb.AddTransformation(step3_replaceValues);
+    dfb.AddTransformation(step4_replaceValues);
 
-//4: add Zone and Area columns
-    const step4a_addColumns = new AddCalculatedColumnTransformation("Zone", "Split([Category], '.', 1)");
-    const step4b_addColumns = new AddCalculatedColumnTransformation("Area", "Split([Category], '.', 2)");
-    dfb.AddTransformation(step4a_addColumns);
-    dfb.AddTransformation(step4b_addColumns);
+//5: add Zone and Area columns
+    const step5a_addColumns = new AddCalculatedColumnTransformation(
+        "Zone",
+        "Split([Category], '.', 1)"
+    );
+    const step5b_addColumns = new AddCalculatedColumnTransformation(
+        "Area",
+        "Split([Category], '.', 2)"
+    );
+    dfb.AddTransformation(step5a_addColumns);
+    dfb.AddTransformation(step5b_addColumns);
 
     flow = dfb.Build();
     reader = dfb.Execute(DataSourcePromptMode.None);
 
-//5: pivot back
+//6: pivot back
     // get new Zone and Area columns
     const zoneColumn = OutParam.create(DataRowReaderColumn);
     reader.Columns.TryGetColumn("Zone", zoneColumn.out)!
@@ -188,19 +200,19 @@ instead we need to get the DataType for the "Value" column in order to construct
     reader.Columns.TryGetColumn("Area", areaColumn.out)!;
     const areaColumnSignature = new DataColumnSignature(areaColumn);
 
-    const step5_pivot = new PivotTransformation();
-    step5_pivot.IdentityColumns = identityColumnsList;
-    step5_pivot.ResultNamingExpression = STEP5_RESULTNAMINGEXPRESSION;
-    step5_pivot.CategoryColumns = TypedArray.create(
+    const step6_pivot = new PivotTransformation();
+    step6_pivot.IdentityColumns = identityColumnsList;
+    step6_pivot.ResultNamingExpression = STEP5_RESULTNAMINGEXPRESSION;
+    step6_pivot.CategoryColumns = TypedArray.create(
         DataColumnSignature,
         [zoneColumnSignature, areaColumnSignature]
     );
-    step5_pivot.ValueColumns = TypedArray.create(
+    step6_pivot.ValueColumns = TypedArray.create(
         ColumnAggregation,
         [new ColumnAggregation(valueColumnSignature, targetMeasure)]
     );
 
-    dfb.AddTransformation(step5_pivot);
+    dfb.AddTransformation(step6_pivot);
 
     flow = dfb.Build();
     reader = dfb.Execute(DataSourcePromptMode.None);
@@ -268,7 +280,8 @@ export function applyWaferTransform({
     const titleColumns = getColumnsFromCsv(baseDataTable, targetColumnTitles);
     const valueColumns = getColumnsFromCsv(baseDataTable, targetColumnValues);
 
-        // the first transformation sequence happens on the new operation data table
+//TODO: this can probably be squeezed into the loop below
+    // the first transformation sequence happens on the new operation data table
     // it's okay to use ! here since we have already validated the inputs
     const firstTitleColumn = titleColumns.shift()!;
     const firstValueColumn = valueColumns.shift()!;
