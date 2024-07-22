@@ -2,7 +2,7 @@
     "apiVersion": "2.0",
     "version": "1.0",
     "type": "action",
-    "name": "Semiconductor",
+    "name": "Bin Wafer Map Zone Analysis",
     "id": "semiconductor",
     "description": "Transforms data and instantiates visualizations for semiconductor bin analysis.",
     "capabilities": [
@@ -11,8 +11,17 @@
     "icon": "icon.svg",
     "scripts": [
         {
+            "id": "wafer-mapchart",
+            "name": "Configure Bin Wafer Map",
+            "file": "build/wafer-mapchart.js",
+            "entryPoint": "createWaferMapchart",
+            "description": "Creates a wafer bin map visualization",
+            "parameters": [
+            ]
+        },
+        {
             "id": "wafer-transform",
-            "name": "Wafermap data transform",
+            "name": "Create Zone Profile Data",
             "file": "build/wafer-transform.js",
             "entryPoint": "applyWaferTransform",
             "description": "Performs a series of transormations on a data table to prepare it for zone profile analysis.",
@@ -26,17 +35,8 @@
             ]
         },
         {
-            "id": "wafer-mapchart",
-            "name": "Create wafer bin map",
-            "file": "build/wafer-mapchart.js",
-            "entryPoint": "createWaferMapchart",
-            "description": "Creates a wafer bin map visualization",
-            "parameters": [
-            ]
-        },
-        {
             "id": "create-linechart",
-            "name": "Create a zone profile line chart",
+            "name": "Configure Zone Profiles Chart",
             "entryPoint": "createLinechart",
             "file": "build/create-linechart.js",
             "description": "Creates a line chart visualization for zone profile analysis"
