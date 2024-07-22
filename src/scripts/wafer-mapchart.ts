@@ -8,12 +8,12 @@ const { MapChart, MarkerLayerVisualization, Projection } = Spotfire.Dxp.Applicat
 const XAXIS_EXPRESSION = "[Die X]";
 const YAXIS_EXPRESSION = "[Die Y]";
 const COLORAXIS_EXPRESSION = "Bin";
-const TRELLIS_PANEL_EXPRESSION = "<[New Wafer]>";
+const TRELLIS_PANEL_EXPRESSION = "<[Wafer]>";
 const TRELLIS_ROWS_COUNT = 3;
 const TRELLIS_COLS_COUNT = 7;
 const CHART_TITLE = "Wafer bin map";
 const MAP_MARKERLAYER_TITLE = "die layer";
-const COLORSCHEME_NAME = "Big Wafer";
+const COLORSCHEME_NAME = "Bin Wafer Map Colors";
 const DATATABLE_NAME = "Big Wafer"
 
 
