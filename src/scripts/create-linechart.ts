@@ -9,10 +9,9 @@ const CHART_TITLE = "Zone Profiles";
 const XAXIS_EXPRESSION = "<[Axis.Default.Names]>";
 const XAXIS_SCALE_ORIENTATION = LabelOrientation.Vertical;
 const YAXIS_EXPRESSION = "[CirclePct.Center], [CirclePct.Donut], [CirclePct.Edge], [SegmentPct.1],[SegmentPct.2],[SegmentPct.3],[SegmentPct.4],[SegmentPct.5],[SegmentPct.6], [MaskPct.1],  [MaskPct.2], [MaskPct.3], [MaskPct.4], [MaskPct.5], [MaskPct.6], [MaskPct.7], [MaskPct.8], [MaskPct.9]";
-const LINEBYAXIS_EXPRESSION = "<[New Wafer]>";
+const LINEBYAXIS_EXPRESSION = "<[Wafer]>";
 const COLORAXIS_EXPRESSION = "<Bin>";
-const LIMITBY_EXPRESSION = "[Bin] >= 2";  // AKA WhereClauseExpression
-const COLORSCHEME_NAME = "Big Wafer";
+const COLORSCHEME_NAME = "Bin Wafer Map Colors";
 const DATATABLE_NAME = "Zone Profiles";
 
 
@@ -33,9 +32,7 @@ export function createLinechart({ document, application }: CreateLinechartParame
 
     lineChart.Data.DataTableReference = dataTable;
     lineChart.Data.MarkingReference = getOrCreateMarking(document, MARKING_NAME);
-    
-    lineChart.Data.WhereClauseExpression = LIMITBY_EXPRESSION;
-    
+        
     lineChart.XAxis.Expression = XAXIS_EXPRESSION;
     lineChart.XAxis.Scale.LabelOrientation = XAXIS_SCALE_ORIENTATION;
     lineChart.YAxis.Expression = YAXIS_EXPRESSION;
