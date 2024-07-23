@@ -12,6 +12,7 @@ const YAXIS_EXPRESSION = "[CirclePct.Center], [CirclePct.Donut], [CirclePct.Edge
 const LINEBYAXIS_EXPRESSION = "<[Wafer]>";
 const COLORAXIS_EXPRESSION = "<Bin>";
 const COLORSCHEME_NAME = "Bin Wafer Map Colors";
+const COLORSCHEME_PATH = "/public/Demonstrations/Manufacturing/Zone Analysis & Commonality";
 const DATATABLE_NAME = "Zone Profiles";
 
 
@@ -53,7 +54,7 @@ export function createLinechart({ document, application }: CreateLinechartParame
     } catch (noDocumentColorSchemeError) {
         // scheme not found in the document; look in the library instead
         try {
-            const libraryColorScheme = getColorSchemeFromLibrary(application, `/${COLORSCHEME_NAME}`);
+            const libraryColorScheme = getColorSchemeFromLibrary(application, `/${COLORSCHEME_PATH}/${COLORSCHEME_NAME}`);
             const documentColorScheme = document.ColoringTemplates.AddFromLibrary(libraryColorScheme);
             lineChart.ColorAxis.Coloring.Apply(documentColorScheme.DisplayName);
         } catch (libraryAccessError) {

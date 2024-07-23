@@ -14,6 +14,7 @@ const TRELLIS_COLS_COUNT = 7;
 const CHART_TITLE = "Wafer bin map";
 const MAP_MARKERLAYER_TITLE = "die layer";
 const COLORSCHEME_NAME = "Bin Wafer Map Colors";
+const COLORSCHEME_PATH = "/public/Demonstrations/Manufacturing/Zone Analysis & Commonality";
 const DATATABLE_NAME = "Big Wafer"
 
 
@@ -77,7 +78,7 @@ export function createMapchart({
     } catch (noDocumentColorSchemeError) {
         // scheme not found in the document; look in the library instead
         try {
-            const libraryColorScheme = getColorSchemeFromLibrary(application, `/${COLORSCHEME_NAME}`);
+            const libraryColorScheme = getColorSchemeFromLibrary(application, `${COLORSCHEME_PATH}/${COLORSCHEME_NAME}`);
             const documentColorScheme = document.ColoringTemplates.AddFromLibrary(libraryColorScheme);
             markerLayer.ColorAxis.Coloring.Apply(documentColorScheme.DisplayName);
         } catch (libraryAccessError) {
