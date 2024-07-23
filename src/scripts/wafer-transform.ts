@@ -78,7 +78,7 @@ function applyTransformSeries(
     dataSource: Spotfire.Dxp.Data.DataSource,
     pkColumns: Spotfire.Dxp.Data.DataColumn[],
     titleColumns: Spotfire.Dxp.Data.DataColumn[],
-    valueColumns: Spotfire.Dxp.Data.DataColumn[],
+    //valueColumns: Spotfire.Dxp.Data.DataColumn[],
     targetMeasure: string,
 ): Spotfire.Dxp.Data.DataSource {
 
@@ -104,7 +104,11 @@ function applyTransformSeries(
 
     const identityColumnSignatures = convertDataColumnsToDataSignatures(pkColumns);
     const categoryColumnSignatures = convertDataColumnsToDataSignatures(titleColumns);
-    const valueColumnSignatures = convertDataColumnsToDataSignatures(valueColumns);
+
+    // get the new valueColumn
+    const pctColumn = OutParam.create(DataRowReaderColumn);
+    reader.Columns.TryGetColumn(colname_pct, pctColumn.out)!;
+    const pctColumnSignature = new DataColumnSignature(pctColumn);
 
     // we need to convert untyped Javascript arrays to typed arrays that are compatible with .NET
     const identityColumnsList = TypedArray.create(
@@ -117,7 +121,7 @@ function applyTransformSeries(
     );
 
     // first convert the DataColumnSignatures to ColumnAggregations, then create a TypedArray
-    const valueColumnsAgg = valueColumnSignatures.map(col => new ColumnAggregation(col, targetMeasure));
+    const valueColumnsAgg = new ColumnAggregation(pctColumnSignature, targetMeasure);
 
     const step2_pivot = new PivotTransformation();
     step2_pivot.IdentityColumns = identityColumnsList;
@@ -125,7 +129,7 @@ function applyTransformSeries(
     step2_pivot.ResultNamingExpression = STEP1_RESULTNAMINGEXPRESSION;
     step2_pivot.ValueColumns = TypedArray.create(
         ColumnAggregation,
-        valueColumnsAgg
+        [valueColumnsAgg]
     );
 
     dfb.AddTransformation(step2_pivot);
@@ -257,13 +261,6 @@ export function applyWaferTransform({
     document,
     application,
     baseDataTable,
-    /*
-    primaryKeyColumns,
-    targetColumnTitles,
-    targetColumnValues,
-    targetMeasure,
-    outputDataTableName,
-    */
 }: ApplyWaferTransformParameters) {
 
     // debug values
@@ -278,20 +275,17 @@ export function applyWaferTransform({
     // parse columns from csv
     const pkColumns = getColumnsFromCsv(baseDataTable, primaryKeyColumns);
     const titleColumns = getColumnsFromCsv(baseDataTable, targetColumnTitles);
-    const valueColumns = getColumnsFromCsv(baseDataTable, targetColumnValues);
 
 //TODO: this can probably be squeezed into the loop below
     // the first transformation sequence happens on the new operation data table
     // it's okay to use ! here since we have already validated the inputs
     const firstTitleColumn = titleColumns.shift()!;
-    const firstValueColumn = valueColumns.shift()!;
 
     const newDataSource = applyTransformSeries(
         application.ImportContext,
         baseDataSource,
         pkColumns,
         [firstTitleColumn],
-        [firstValueColumn],
         targetMeasure
     )
 
@@ -302,14 +296,12 @@ export function applyWaferTransform({
     for (let i = 0; i < titleColumns.length; i++) {
 
         const titleCol = titleColumns[i];
-        const valueCol = valueColumns[i];
 
         const transformedDataTableDataSource = applyTransformSeries(
             application.ImportContext,
             baseDataSource,
             pkColumns,
             [titleCol],
-            [valueCol],
             targetMeasure
         );
 
