@@ -62,13 +62,6 @@ export function createMapchart({
     const lightGray = System.Drawing.Color.FromArgb(255, 241, 241, 241);
     markerLayer.ColorAxis.Coloring.SetColorForCategory(new CategoryKey(1), lightGray);
 
-    // set up Mmarking behavior
-    // markerLayer.Data.MarkingReference = marking2;
-    // markerLayer.Data.Filterings.Add(marking1);
-    // markerLayer.Data.Filterings.Add(marking2);
-    // markerLayer.Data.MarkingCombinationMethod = DataSelectionCombinationMethod.Union;
-    // markerLayer.Data.LimitingMarkingsEmptyBehavior = LimitingMarkingsEmptyBehavior.ShowEmpty;
-
     // this must be set after the markerLayer is created
     // configure trellis properties
     mapChart.Trellis.PanelAxis.Expression = TRELLIS_PANEL_EXPRESSION;
