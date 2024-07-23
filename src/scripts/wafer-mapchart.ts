@@ -58,6 +58,7 @@ export function createMapchart({
 
     // set the color axis and set first Bin color to a light gray
     // (keeping this as a fallback in case the color scheme is unavailable)
+    markerLayer.ColorAxis.Coloring.Clear();
     markerLayer.ColorAxis.Expression = COLORAXIS_EXPRESSION;
     const lightGray = System.Drawing.Color.FromArgb(255, 241, 241, 241);
     markerLayer.ColorAxis.Coloring.SetColorForCategory(new CategoryKey(1), lightGray);
