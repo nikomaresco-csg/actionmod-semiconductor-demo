@@ -7,12 +7,13 @@ node_modules/
 package-lock.json
 
 # build artifacts
-build/
-Semiconductor.mod
+*.mod
 
 # misc stuff that i'm working on that might ultimately be cut
 python/
 spotfire_server_package/
 *.wkb
 *.wkt
-semiconductor.zip
+*.zip
+*.rar
+
