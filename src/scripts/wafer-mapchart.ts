@@ -1,4 +1,4 @@
-import { getColorSchemeFromDocument, getColorSchemeFromLibrary } from "../utils/library";
+import { getColorSchemeFromDocument, getColorSchemeFromLibrary, searchLibrary } from "../utils/library";
 
 const { MarkerClass, CategoryKey } = Spotfire.Dxp.Application.Visuals;
 const { MapChart, MarkerLayerVisualization, Projection } = Spotfire.Dxp.Application.Visuals.Maps;
@@ -82,10 +82,18 @@ export function createMapchart({
             const documentColorScheme = document.ColoringTemplates.AddFromLibrary(libraryColorScheme);
             markerLayer.ColorAxis.Coloring.Apply(documentColorScheme.DisplayName);
         } catch (libraryAccessError) {
-            // probably the user is not connected to a server, or the library path is invalid
-            // do nothing, the user will have to set the color scheme manually
+            // make one last attempt to search for the color scheme before giving up
+            try {
+                const searchExpression = `type:colorscheme title:"${COLORSCHEME_NAME}"`;
+                const results = searchLibrary(application, searchExpression);
+                const documentColorScheme = document.ColoringTemplates.AddFromLibrary(Array.from(results)[0]);
+                markerLayer.ColorAxis.Coloring.Apply(documentColorScheme.DisplayName);
+            } catch (searchError) {
+                // we've tried everything we can; the color scheme simply ain't there ¯\_(ツ)_/¯
+            }
         }
     }
+    
 }
 
 RegisterEntryPoint(createMapchart);
