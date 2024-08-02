@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../src/utils/utils.ts", "../src/scripts/my-script.ts"],
+  "sourcesContent": ["export function addExclamationMark(message: string) {\r\n    return message + \"!\";\r\n}\r\n", "import { addExclamationMark } from \"../utils/utils\";\r\n\r\n/**\r\n * The entry point of a script. This function will be passed the parameters\r\n * specified in the manifest.\r\n */\r\nfunction myScript({ document, application, message: _message }: MyScriptParameters) {\r\n    const message = addExclamationMark(\"test \" + _message);\r\n    console.log(message);\r\n}\r\n\r\n// Registers the entry point such that Spotfire can invoke it in cases where\r\n// the name has been minified or moved into a local scope.\r\nRegisterEntryPoint(myScript);\r\n"],
+  "mappings": ";;;AAAO,WAAS,mBAAmB,SAAiB;AAChD,WAAO,UAAU;AAAA,EACrB;;;ACIA,WAAS,SAAS,EAAE,UAAU,aAAa,SAAS,SAAS,GAAuB;AAChF,UAAM,UAAU,mBAAmB,UAAU,QAAQ;AACrD,YAAQ,IAAI,OAAO;AAAA,EACvB;AAIA,qBAAmB,QAAQ;",
+  "names": []
+}
